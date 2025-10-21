@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cena con Cugini - Ricette Regionali</title>
+<style>
+body {
+font-family: "Segoe UI", sans-serif;
+background: linear-gradient(135deg, #fff8e1, #ffecb3);
+color: #333;
+margin: 0;
+padding: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-start;
+min-height: 100vh;
+}
+h1 {
+color: #d17b00;
+margin-top: 40px;
+text-align: center;
+}
+button {
+background-color: #d17b00;
+color: white;
+font-size: 1.2em;
+padding: 15px 25px;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+transition: background-color 0.2s ease, transform 0.2s ease;
+margin-top: 25px;
+}
+button:hover {
+background-color: #b76700;
+transform: scale(1.05);
+}
+.card {
+margin-top: 30px;
+background: #fff;
+border-radius: 12px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+padding: 25px;
+text-align: center;
+width: 85%;
+max-width: 500px;
+animation: fadeIn 0.4s ease;
+}
+.image-container img {
+width: 100%;
+max-height: 280px;
+object-fit: cover;
+border-radius: 10px;
+margin-bottom: 15px;
+}
+.region {
+font-size: 1.4em;
+color: #d17b00;
+font-weight: bold;
+}
+.recipe {
+font-size: 1.2em;
+margin-top: 10px;
+color: #333;
+}
+.subtitle {
+margin-top: 10px;
+font-weight: bold;
+color: #b76700;
+}
+ul {
+text-align: left;
+margin: 10px auto;
+width: fit-content;
+padding-left: 20px;
+}
+p {
+text-align: justify;
+}
+footer {
+margin-top: 40px;
+font-size: 0.9em;
+color: #777;
+}
+@keyframes fadeIn {
+from {opacity: 0; transform: translateY(20px);}
+to {opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+<body>
+
+<h1>🍷 Cena con Cugini – Generatore di Ricette Regionali 🇮🇹</h1>
+<button id="generateButton">🎲 Genera Ricetta Casuale</button>
+
+<div class="card" id="resultCard" style="display:none;">
+<div class="image-container">
+<img id="recipeImage" src="" alt="Foto ricetta">
+</div>
+<div class="region" id="regionName"></div>
+<div class="recipe" id="recipeName"></div>
+</div>
+
+<div class="card" id="detailsCard" style="display:none;">
+<div class="subtitle">🧂 Ingredienti principali:</div>
+<ul id="ingredientsList"></ul>
+<div class="subtitle">👨‍🍳 Preparazione:</div>
+<p id="preparationText"></p>
+</div>
+
+<footer>Ogni clic svela una nuova ricetta per la cena con i cugini 🍝</footer>
+
+<script>
+const ricette = {
+"Puglia": {
+"Orecchiette con le cime di rapa": {
+ingredienti: ["Orecchiette", "Cime di rapa", "Aglio", "Olio extravergine d'oliva", "Acciughe", "Peperoncino"],
+preparazione: "Sbollenta le cime di rapa e cuoci le orecchiette nella stessa acqua. In una padella soffriggi aglio, olio, acciughe e peperoncino. Scola la pasta e saltala con le verdure nel condimento.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/8/81/Orecchiette_con_le_cime_di_rapa.jpg"
+},
+"Panzerotti fritti": {
+ingredienti: ["Farina", "Lievito", "Mozzarella", "Pomodoro", "Sale", "Olio per friggere"],
+preparazione: "Prepara un impasto morbido, lascialo lievitare e poi forma dei dischi. Riempili con pomodoro e mozzarella, richiudili e friggili fino a doratura.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Panzerotto_pugliese.jpg"
+}
+},
+"Campania": {
+"Pizza margherita": {
+ingredienti: ["Farina", "Lievito", "Acqua", "Mozzarella", "Pomodoro", "Basilico"],
+preparazione: "Prepara un impasto lievitato, stendilo e condiscilo con pomodoro, mozzarella e basilico. Cuoci in forno molto caldo finché croccante.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Supreme_pizza.jpg"
+},
+"Spaghetti alle vongole": {
+ingredienti: ["Spaghetti", "Vongole", "Aglio", "Olio", "Prezzemolo", "Vino bianco"],
+preparazione: "Fai aprire le vongole in padella con olio e aglio, sfuma con vino bianco. Cuoci gli spaghetti e saltali nel sugo di vongole con prezzemolo.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/2/28/Spaghetti_alle_vongole_veraci.jpg"
+}
+},
+"Sicilia": {
+"Arancini di riso": {
+ingredienti: ["Riso", "Ragù", "Piselli", "Mozzarella", "Pangrattato", "Olio per friggere"],
+preparazione: "Cuoci il riso, forma delle sfere con un ripieno di ragù e mozzarella, impanale e friggile fino a doratura.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Arancini_siciliani.jpg"
+},
+"Pasta alla norma": {
+ingredienti: ["Pasta", "Melanzane", "Pomodoro", "Ricotta salata", "Basilico"],
+preparazione: "Friggi le melanzane, prepara un sugo di pomodoro, unisci la pasta e le melanzane e completa con ricotta salata e basilico.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Pasta_alla_Norma.jpg"
+}
+},
+"Lazio": {
+"Carbonara": {
+ingredienti: ["Spaghetti", "Guanciale", "Uova", "Pecorino romano", "Pepe nero"],
+preparazione: "Rosola il guanciale, sbatti uova e pecorino, unisci la pasta scolata e mescola fuori dal fuoco fino a ottenere una crema.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Spaghetti_alla_Carbonara_%28cropped%29.jpg"
+},
+"Amatriciana": {
+ingredienti: ["Bucatini", "Guanciale", "Pomodori pelati", "Pecorino romano", "Pepe"],
+preparazione: "Soffriggi il guanciale, aggiungi pomodoro e cuoci. Condisci la pasta e spolvera con pecorino.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/5/51/Bucatini_all%27Amatriciana.jpg"
+}
+},
+"Toscana": {
+"Ribollita": {
+ingredienti: ["Pane toscano", "Cavolo nero", "Fagioli cannellini", "Carote", "Cipolla", "Sedano"],
+preparazione: "Prepara una zuppa di verdure e fagioli, aggiungi pane raffermo e lascia sobbollire. Il giorno dopo ‘ribolli’ la zuppa per servirla calda.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Ribollita_%28cropped%29.jpg"
+},
+"Bistecca alla fiorentina": {
+ingredienti: ["Bistecca di manzo", "Sale grosso", "Pepe", "Olio"],
+preparazione: "Cuoci la bistecca sulla brace pochi minuti per lato, condisci con sale e olio e servila al sangue.",
+immagine: "https://upload.wikimedia.org/wikipedia/commons/4/41/Bistecca_alla_fiorentina_cotta.jpg"
+}
+}
+};
+
+const button = document.getElementById("generateButton");
+const resultCard = document.getElementById("resultCard");
+const detailsCard = document.getElementById("detailsCard");
+const regionName = document.getElementById("regionName");
+const recipeName = document.getElementById("recipeName");
+const ingredientsList = document.getElementById("ingredientsList");
+const preparationText = document.getElementById("preparationText");
+const recipeImage = document.getElementById("recipeImage");
+
+function generaRicettaCasuale() {
+const regioni = Object.keys(ricette);
+const regioneCasuale = regioni[Math.floor(Math.random() * regioni.length)];
+const ricetteRegione = Object.keys(ricette[regioneCasuale]);
+const ricettaCasuale = ricetteRegione[Math.floor(Math.random() * ricetteRegione.length)];
+const dati = ricette[regioneCasuale][ricettaCasuale];
+
+// Aggiorna contenuti
+regionName.textContent = regioneCasuale;
+recipeName.textContent = ricettaCasuale;
+ingredientsList.innerHTML = dati.ingredienti.map(i => `<li>${i}</li>`).join("");
+preparationText.textContent = dati.preparazione;
+recipeImage.src = dati.immagine;
+recipeImage.alt = ricettaCasuale;
+
+resultCard.style.display = "block";
+detailsCard.style.display = "block";
+}
+
+button.addEventListener("click", generaRicettaCasuale);
+</script>
+
+</body>
+</html>
